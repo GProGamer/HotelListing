@@ -1,4 +1,4 @@
-﻿using HotelListing.API.Models.Country.Hotel;
+﻿using HotelListing.API.Models.Hotel;
 
 namespace HotelListing.API.Models.Country
 {
