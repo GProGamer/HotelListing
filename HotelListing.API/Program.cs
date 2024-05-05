@@ -49,7 +49,7 @@ builder.Services.AddApiVersioning(options =>
         new HeaderApiVersionReader("X-Version"),
         new MediaTypeApiVersionReader("ver")
         );
-})
+}).AddMvc()
 .AddApiExplorer(
     options =>
     {
