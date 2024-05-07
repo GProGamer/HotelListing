@@ -1,5 +1,7 @@
 using Asp.Versioning;
 using HotelListing.API.Data;
+using HotelListing.API.Middleware;
+using HotelListing.API.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.OData;
