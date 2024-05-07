@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HotelListing.API.Data;
 using AutoMapper;
-using HotelListing.API.Contracts;
-using HotelListing.API.Models.Hotel;
+using HotelListing.API.Core.Models;
+using HotelListing.API.Core.Models.Hotel;
+using HotelListing.API.Core.Contracts;
 
 namespace HotelListing.API.Controllers
 {
@@ -31,6 +27,14 @@ namespace HotelListing.API.Controllers
         {
             var hotels = await _hotelsRepository.GetAllAsync();
             return Ok(_mapper.Map<List<HotelDto>>(hotels));
+        }
+
+        // GET: api/Hotels/Paged?StartIndex=0&PageNumber=15
+        [HttpGet("Paged")]
+        public async Task<ActionResult<PagedResult<HotelDto>>> GetPagedHotels([FromQuery]QueryParameters queryParameters)
+        {
+            var pagedHotelsResult = await _hotelsRepository.GetAllAsync<HotelDto>(queryParameters);
+            return Ok(pagedHotelsResult);
         }
 
         // GET: api/Hotels/5

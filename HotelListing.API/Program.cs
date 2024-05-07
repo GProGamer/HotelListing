@@ -1,22 +1,21 @@
 using Asp.Versioning;
-using Asp.Versioning.Conventions;
-using HotelListing.API.Configurations;
-using HotelListing.API.Contracts;
-using HotelListing.API.Controllers;
 using HotelListing.API.Data;
-using HotelListing.API.Middleware;
-using HotelListing.API.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text;
+using HotelListing.API.Core.Contracts;
+using HotelListing.API.Core.Repository;
+using HotelListing.API.Core.Configurations;
+using HotelListing.API.Core.Middleware;
+using HotelListing.API;
+using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 
 var connectionString = builder.Configuration.GetConnectionString("HotelListingDbConnectionString");
@@ -32,7 +31,9 @@ builder.Services.AddIdentityCore<ApiUser>()
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
+builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+builder.Services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
 
 builder.Services.AddCors(options =>
 {
@@ -49,8 +50,7 @@ builder.Services.AddApiVersioning(options =>
         new HeaderApiVersionReader("X-Version"),
         new MediaTypeApiVersionReader("ver")
         );
-})
-.AddApiExplorer(
+}).AddMvc().AddApiExplorer(
     options =>
     {
         
@@ -92,6 +92,11 @@ builder.Services.AddResponseCaching(options =>
     options.UseCaseSensitivePaths = true;
 });
 
+builder.Services.AddControllers().AddOData(options =>
+{
+    options.Select().OrderBy().Filter();
+});
+
 
 var app = builder.Build();
 
@@ -99,7 +104,17 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        var descriptions = app.DescribeApiVersions();
+        // build a swagger endpoint for each discovered API version
+        foreach (var description in descriptions)
+        {
+            var url = $"/swagger/{description.GroupName}/swagger.json";
+            var name = description.GroupName.ToUpperInvariant();
+            options.SwaggerEndpoint(url, name);
+        }
+    });
 }
 
 app.UseMiddleware<ExceptionMiddleware>();

@@ -1,27 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HotelListing.API.Data;
-using HotelListing.API.Models.Country;
 using AutoMapper;
-using HotelListing.API.Contracts;
-using System.Runtime.InteropServices;
+using HotelListing.API.Core.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
-using HotelListing.API.Exceptions;
 using Asp.Versioning;
-using HotelListing.API.Models;
+using Microsoft.AspNetCore.OData.Query;
+using HotelListing.API.Core.Models.Country;
+using HotelListing.API.Core.Exceptions;
+using HotelListing.API.Core.Contracts;
 
 namespace HotelListing.API.Controllers
 {
-
+    [ApiVersion("1.0", Deprecated = true)]
     [ApiController]
+    [Route("api/countries")]
     [Route("api/v{version:apiVersion}/countries")]
-    [ApiVersion("1.0")]
+    
     //[ApiVersion(1)]
     public class CountriesController : ControllerBase
     {
@@ -39,6 +34,7 @@ namespace HotelListing.API.Controllers
 
         // GET: api/Countries
         [HttpGet]
+        [EnableQuery]
         public async Task<ActionResult<IEnumerable<GetCountryDto>>> GetCountries()
         {
             var countries = await _countriesRepository.GetAllAsync();

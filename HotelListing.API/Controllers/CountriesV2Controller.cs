@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HotelListing.API.Data;
-using HotelListing.API.Models.Country;
 using AutoMapper;
-using HotelListing.API.Contracts;
-using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
-using HotelListing.API.Exceptions;
 using Asp.Versioning;
+using HotelListing.API.Core.Contracts;
+using HotelListing.API.Core.Models.Country;
+using HotelListing.API.Core.Exceptions;
 
 namespace HotelListing.API.Controllers
 {
 
-    [ApiController]
-    [Route("api/v{version:apiVersion}/countries")]
     [ApiVersion("2.0")]
+    [ApiController]
+    [Route("api/countries")]
+    [Route("api/v{version:apiVersion}/countries")]
     //[ApiVersion(2)]
     public class CountriesV2Controller : ControllerBase
     {
